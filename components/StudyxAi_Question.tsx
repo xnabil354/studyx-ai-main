@@ -64,6 +64,39 @@ const StudyxAi_Question = () => {
     }
   };
 
+  const notifyTempEmailCreation = () => {
+    MySwal.fire({
+      title: 'Pembuatan Akun Temporary Gmail untuk Akses Jawaban Premium studyx.ai',
+      html: `
+        <p>Anda dapat membuat akun Temporary Gmail menggunakan situs web berikut:</p>
+        <ul class="list-disc list-inside">
+          <li>
+            <a href="https://www.emailnator.com/" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline">
+              Emailnator
+            </a> 
+            <button id="emailnator-copy" class="ml-2 bg-gradient-to-r from-blue-400 to-blue-600 text-white py-1 px-3 rounded-full shadow-lg transform transition-transform hover:scale-105">
+              Copy URL
+            </button>
+          </li>
+          <li class="mt-2">
+            <a href="https://www.mailticking.com/" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline">
+              Mailticking
+            </a> 
+            <button id="mailticking-copy" class="ml-2 bg-gradient-to-r from-green-400 to-green-600 text-white py-1 px-3 rounded-full shadow-lg transform transition-transform hover:scale-105">
+              Copy URL
+            </button>
+          </li>
+        </ul>
+        <p class="mt-4 text-sm text-gray-600">Klik tombol "Copy URL" untuk menyalin tautan dan kunjungi situs tersebut untuk membuat akun Temporary Gmail.</p>
+      `,
+      showConfirmButton: false,
+      didOpen: () => {
+        document.getElementById('emailnator-copy')?.addEventListener('click', () => navigator.clipboard.writeText('https://www.emailnator.com/'));
+        document.getElementById('mailticking-copy')?.addEventListener('click', () => navigator.clipboard.writeText('https://www.mailticking.com/'));
+      }
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (selectedModelId === null) {
@@ -158,7 +191,7 @@ const StudyxAi_Question = () => {
             Copy URL
           </button>
           <p className="mt-4 text-sm text-gray-600">
-          Untuk mengakses Jawaban, Salin URL di atas dan login menggunakan <a href="https://www.mailticking.com/">Temporary Gmail</a> atau Akun <a href="studyx.ai">Studyx AI</a> yang anda punya. Pastikan Anda memiliki lebih dari satu akun Google atau akun Studyx.ai untuk mengakses jawaban.
+          Untuk mengakses Jawaban, Salin URL di atas dan login menggunakan <button onClick={notifyTempEmailCreation} className="text-blue-600 underline">Temporary Gmail</button> atau Akun <a href="https://studyx.ai/" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Studyx AI</a> yang Anda punya. Pastikan Anda memiliki lebih dari satu akun Google atau akun Studyx.ai untuk mengakses jawaban.
           </p>
         </div>
       )}
