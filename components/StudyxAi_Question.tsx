@@ -136,6 +136,7 @@ const StudyxAi_Question = () => {
           placeholder="Type your question here..."
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
+          required
         />
         <button
           type="submit"
@@ -157,7 +158,7 @@ const StudyxAi_Question = () => {
             Copy URL
           </button>
           <p className="mt-4 text-sm text-gray-600">
-            Untuk mengakses jawaban, salin URL di atas dan login menggunakan akun Google atau akun Studyx.ai yang anda punya. Pastikan Anda memiliki lebih dari satu akun Google atau akun Studyx.ai untuk mengakses jawaban.
+          Untuk mengakses Jawaban, Salin URL di atas dan login menggunakan <a href="https://www.mailticking.com/">Temporary Gmail</a> atau Akun <a href="studyx.ai">Studyx AI</a> yang anda punya. Pastikan Anda memiliki lebih dari satu akun Google atau akun Studyx.ai untuk mengakses jawaban.
           </p>
         </div>
       )}
