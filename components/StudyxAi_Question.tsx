@@ -10,7 +10,7 @@ type Model = {
   modelName: string;
 };
 
-const StudyxAi_Question = () => {
+const StudyxAi_Question = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const [question, setQuestion] = useState<string>('');
   const [models, setModels] = useState<Model[]>([]);
   const [selectedModelId, setSelectedModelId] = useState<number | null>(null);
@@ -122,7 +122,6 @@ const StudyxAi_Question = () => {
       }
     });
   };
-  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -163,13 +162,13 @@ const StudyxAi_Question = () => {
   };
 
   return (
-    <div className="max-w-xl mx-auto p-4">
+    <div className={`max-w-xl mx-auto p-4 ${isDarkMode ? 'text-gray-100' : 'text-gray-700'}`}>
       <h1 className="text-2xl font-bold mb-4">Ask a Question</h1>
       
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">Select a Model:</label>
+        <label className="block text-sm font-medium mb-2">Select a Model:</label>
         <select
-          className="w-full p-2 border border-gray-300 rounded"
+          className={`w-full p-2 border ${isDarkMode ? 'border-gray-600 bg-gray-800 text-white placeholder-gray-400' : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'} rounded`}
           value={selectedModelId ?? ''}
           onChange={handleModelChange}
         >
@@ -196,7 +195,7 @@ const StudyxAi_Question = () => {
 
       <form onSubmit={handleSubmit} className="mb-4">
         <textarea
-          className="w-full p-2 border border-gray-300 rounded mb-4"
+          className={`w-full p-2 border ${isDarkMode ? 'border-gray-600 bg-gray-800 text-white placeholder-gray-400' : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'} rounded mb-4`}
           rows={4}
           placeholder="Type your question here..."
           value={question}
@@ -218,12 +217,12 @@ const StudyxAi_Question = () => {
           <p className="break-all">https://studyx.ai/webapp/homework/{shortId}</p>
           <button
             onClick={handleCopyUrl}
-            className="mt-2 bg-gradient-to-r from-blue-400 to-blue-600 text-white py-2 px-4 rounded-full shadow-lg transform transition-transform hover:scale-105"
+            className="mt-2 bg-blue-500 text-white py-2 px-4 rounded"
           >
             Copy URL
           </button>
-          <p className="mt-4 text-sm text-gray-600">
-          Untuk mengakses Jawaban, Salin URL di atas dan login menggunakan <button onClick={notifyTempEmailCreation} className="text-blue-600 underline">Temporary Gmail</button> atau Akun <a href="https://studyx.ai/" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Studyx AI</a> yang Anda punya. Pastikan Anda memiliki lebih dari satu akun Google atau akun Studyx.ai untuk mengakses jawaban.
+          <p className="mt-4 text-gray-700">
+            Untuk mengakses Jawaban, Salin URL di atas dan login menggunakan <button onClick={notifyTempEmailCreation} className="text-blue-600 underline">Temporary Gmail</button> atau Akun <a href="https://studyx.ai/" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Studyx AI</a> yang Anda punya. Pastikan Anda memiliki lebih dari satu akun Google atau akun Studyx.ai untuk mengakses jawaban.
           </p>
         </div>
       )}

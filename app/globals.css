@@ -31,3 +31,43 @@ body {
     text-wrap: balance;
   }
 }
+
+#dark-mode-toggle + label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px;
+  width: 48px;
+  height: 24px;
+  background-color: #ccc;
+  border-radius: 9999px;
+  position: relative;
+  transition: background-color 0.3s;
+}
+
+#dark-mode-toggle:checked + label {
+  background-color: #4B5563; /* Dark mode background */
+}
+
+#dark-mode-toggle + label > div {
+  background-color: #fff;
+  border-radius: 9999px;
+  height: 20px;
+  width: 20px;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.3s, background-color 0.3s;
+}
+
+#dark-mode-toggle:checked + label > div {
+  transform: translateX(24px);
+}
+
+#dark-mode-toggle:checked + label > div > svg {
+  color: #FFD700; /* Sun color */
+}
+
+#dark-mode-toggle + label > div > svg {
+  color: #1E3A8A; /* Moon color */
+}
