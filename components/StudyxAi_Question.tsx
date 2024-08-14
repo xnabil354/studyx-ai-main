@@ -100,7 +100,12 @@ const StudyxAi_Question = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (selectedModelId === null) {
-      alert('Please select a model.');
+      MySwal.fire({
+        icon: 'warning',
+        title: 'Model Not Selected',
+        text: 'Please select a model.',
+        showConfirmButton: true,
+      });
       return;
     }
     setLoading(true);
