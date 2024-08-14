@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
-
 const MySwal = withReactContent(Swal);
 
 type Model = {
@@ -148,9 +147,9 @@ const StudyxAi_Question = () => {
       </form>
       
       {shortId && (
-        <div className="mt-4 p-4 bg-gray-100 rounded">
+        <div className="mt-4 p-4 bg-gray-100 rounded text-center">
           <h2 className="text-lg font-semibold">Short ID :</h2>
-          <p>https://studyx.ai/webapp/homework/{shortId}</p>
+          <p className="break-all">https://studyx.ai/webapp/homework/{shortId}</p>
           <button
             onClick={handleCopyUrl}
             className="mt-2 bg-gradient-to-r from-blue-400 to-blue-600 text-white py-2 px-4 rounded-full shadow-lg transform transition-transform hover:scale-105"
@@ -158,7 +157,7 @@ const StudyxAi_Question = () => {
             Copy URL
           </button>
           <p className="mt-4 text-sm text-gray-600">
-          Untuk mengakses jawaban, Salin URL di atas dan login menggunakan Akun Google/Akun Studyx.ai yang anda punya. Pastikan Anda memiliki lebih dari satu akun Google/Akun Studyx.ai untuk mengakses jawaban.
+            Untuk mengakses jawaban, salin URL di atas dan login menggunakan akun Google atau akun Studyx.ai yang anda punya. Pastikan Anda memiliki lebih dari satu akun Google atau akun Studyx.ai untuk mengakses jawaban.
           </p>
         </div>
       )}
