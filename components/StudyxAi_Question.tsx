@@ -148,7 +148,7 @@ const StudyxAi_Question = () => {
       
       {shortId && (
         <div className="mt-4 p-4 bg-gray-100 rounded text-center">
-          <h2 className="text-lg font-semibold">Short ID :</h2>
+          <h2 className="text-lg font-semibold">Url Jawaban :</h2>
           <p className="break-all">https://studyx.ai/webapp/homework/{shortId}</p>
           <button
             onClick={handleCopyUrl}
