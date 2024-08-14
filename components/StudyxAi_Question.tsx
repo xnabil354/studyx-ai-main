@@ -91,11 +91,38 @@ const StudyxAi_Question = () => {
       `,
       showConfirmButton: false,
       didOpen: () => {
-        document.getElementById('emailnator-copy')?.addEventListener('click', () => navigator.clipboard.writeText('https://www.emailnator.com/'));
-        document.getElementById('mailticking-copy')?.addEventListener('click', () => navigator.clipboard.writeText('https://www.mailticking.com/'));
+        const emailnatorCopyBtn = document.getElementById('emailnator-copy');
+        const mailtickingCopyBtn = document.getElementById('mailticking-copy');
+  
+        if (emailnatorCopyBtn) {
+          emailnatorCopyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText('https://www.emailnator.com/');
+            MySwal.fire({
+              icon: 'success',
+              title: 'Copied URL',
+              text: 'Emailnator URL has been copied!',
+              showConfirmButton: false,
+              timer: 1500,
+            });
+          });
+        }
+  
+        if (mailtickingCopyBtn) {
+          mailtickingCopyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText('https://www.mailticking.com/');
+            MySwal.fire({
+              icon: 'success',
+              title: 'Copied URL',
+              text: 'Mailticking URL has been copied!',
+              showConfirmButton: false,
+              timer: 1500,
+            });
+          });
+        }
       }
     });
   };
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
