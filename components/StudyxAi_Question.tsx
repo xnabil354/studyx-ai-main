@@ -10,14 +10,19 @@ type Model = {
   modelName: string;
 };
 
+type Result = {
+  shortId: string | null;
+  answer: string | null;
+};
+
 const StudyxAi_Question = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const [question, setQuestion] = useState<string>('');
   const [models, setModels] = useState<Model[]>([]);
   const [selectedModelId, setSelectedModelId] = useState<number | null>(null);
-  const [shortId, setShortId] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [showNotification, setShowNotification] = useState<boolean>(false);
   const [notificationMessage, setNotificationMessage] = useState<string>('');
+  const [result, setResult] = useState<Result | null>(null);
 
   useEffect(() => {
     const fetchModels = async () => {
@@ -52,8 +57,8 @@ const StudyxAi_Question = ({ isDarkMode }: { isDarkMode: boolean }) => {
   };
 
   const handleCopyUrl = () => {
-    if (shortId) {
-      navigator.clipboard.writeText(`https://studyx.ai/webapp/homework/${shortId}`);
+    if (result && result.shortId) {
+      navigator.clipboard.writeText(`https://studyx.ai/webapp/homework/${result.shortId}`);
       MySwal.fire({
         icon: 'success',
         title: 'URL berhasil disalin!',
@@ -123,6 +128,49 @@ const StudyxAi_Question = ({ isDarkMode }: { isDarkMode: boolean }) => {
     });
   };
 
+  const formatBoldText = (text: string): JSX.Element[] => {
+    const parts = text.split(/(\*\*.*?\*\*|\*.*?\*)/g);
+    return parts.map((part, index) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        return <strong key={index}>{part.slice(2, -2)}</strong>;
+      } else if (part.startsWith('*') && part.endsWith('*')) {
+        return <strong key={index}>{part.slice(1, -1)}</strong>;
+      }
+      return <span key={index}>{part}</span>;
+    });
+  };
+
+  const formatAnswer = (text: string): JSX.Element => {
+    const lines = text.replace(/###/g, '').split('\n').filter(line => line.trim() !== '');
+    
+    const formattedLines = lines.map((line, index) => {
+      if (/^#\s/.test(line)) {
+        return <h2 key={index} className="text-xl font-bold mt-4 mb-2">{formatBoldText(line.replace(/^#\s/, ''))}</h2>;
+      }
+      
+      if (/^\d+\./.test(line)) {
+        const [number, ...rest] = line.split('.');
+        return (
+          <p key={index} className="ml-4 mb-2">
+            <span className="font-bold">{number}.</span>{formatBoldText(rest.join('.').trim())}
+          </p>
+        );
+      }
+      
+      if (line.trim() === "Solution By Steps") {
+        return <h3 key={index} className="text-lg font-semibold mt-4 mb-2 bg-purple-100 p-2 rounded">Solution By Steps</h3>;
+      }
+
+      if (/^-\s/.test(line)) {
+        return <p key={index} className="ml-4 mb-2">• {formatBoldText(line.replace(/^-\s/, ''))}</p>;
+      }
+      
+      return <p key={index} className="mb-2">{formatBoldText(line)}</p>;
+    });
+
+    return <div className="answer-container">{formattedLines}</div>;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (selectedModelId === null) {
@@ -135,7 +183,7 @@ const StudyxAi_Question = ({ isDarkMode }: { isDarkMode: boolean }) => {
       return;
     }
     setLoading(true);
-    setShortId(null);
+    setResult(null);
 
     try {
       const response = await fetch('/api/studyx-ai', {
@@ -152,10 +200,58 @@ const StudyxAi_Question = ({ isDarkMode }: { isDarkMode: boolean }) => {
       });
 
       const data = await response.json();
-      setShortId(data?.shortId || "No shortId received.");
+      const shortId = data?.shortId || "No shortId received.";
+
+      if (shortId !== "No shortId received.") {
+        const pushResponse = await fetch('/api/pushQuestionV2', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            promptInput: question,
+            questionId: shortId,
+            regenerate: true,
+            sessionId: Math.floor(Math.random() * 1e18).toString(),
+            userId: Math.floor(Math.random() * 1e18).toString(),
+            modelType: selectedModelId,
+            event: "pushQuestion",
+            eventId: `s${Date.now()}`,
+            eventType: 2,
+            paramsS2: shortId,
+            paramsS3: 1,
+            paramsS4: "",
+            paramsType: selectedModelId,
+            askType: "",
+            eventSourceType: "web_account_homework",
+            eventSourceDetail: `https://studyx.ai/webapp/homework/${shortId}`
+          }),
+        });
+
+        const pushData = await pushResponse.json();
+        if (pushData.data && pushData.data[0] && pushData.data[0].answerText) {
+          setResult({
+            shortId: shortId,
+            answer: pushData.data[0].answerText
+          });
+        } else {
+          setResult({
+            shortId: shortId,
+            answer: "No answer received from the API."
+          });
+        }
+      } else {
+        setResult({
+          shortId: null,
+          answer: "Failed to get shortId from the API."
+        });
+      }
     } catch (error) {
       console.error('Error fetching data:', error);
-      setShortId("Error fetching shortId.");
+      setResult({
+        shortId: null,
+        answer: "Failed to get response from API"
+      });
     } finally {
       setLoading(false);
     }
@@ -211,19 +307,27 @@ const StudyxAi_Question = ({ isDarkMode }: { isDarkMode: boolean }) => {
         </button>
       </form>
       
-      {shortId && (
-        <div className="mt-4 p-4 bg-gray-100 rounded text-center">
-          <h2 className="text-lg font-semibold">Url Jawaban :</h2>
-          <p className="break-all">https://studyx.ai/webapp/homework/{shortId}</p>
-          <button
-            onClick={handleCopyUrl}
-            className="mt-2 bg-blue-500 text-white py-2 px-4 rounded"
-          >
-            Copy URL
-          </button>
-          <p className="mt-4 text-gray-700">
-            Untuk mengakses Jawaban, Salin URL di atas dan login menggunakan <button onClick={notifyTempEmailCreation} className="text-blue-600 underline">Temporary Gmail</button> atau Akun <a href="https://studyx.ai/" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Studyx AI</a> yang Anda punya. Pastikan Anda memiliki lebih dari satu akun Google atau akun Studyx.ai untuk mengakses jawaban.
-          </p>
+      {result && (
+        <div className="mt-4 p-4 bg-gray-100 rounded">
+          {result.shortId && (
+            <div className="mb-4 text-center">
+              <h2 className="text-lg font-semibold">Url Jawaban :</h2>
+              <p className="break-all">https://studyx.ai/webapp/homework/{result.shortId}</p>
+              <button
+                onClick={handleCopyUrl}
+                className="mt-2 bg-blue-500 text-white py-2 px-4 rounded"
+              >
+                Copy URL
+              </button>
+              <p className="mt-4 text-gray-700">
+                Untuk mengakses Jawaban secara langsung di Website studyx.ai, Salin URL di atas dan login menggunakan <button onClick={notifyTempEmailCreation} className="text-blue-600 underline">Temporary Gmail</button> atau Akun <a href="https://studyx.ai/" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Studyx AI</a> yang Anda punya. Pastikan Anda memiliki lebih dari satu akun Google atau akun Studyx.ai untuk mengakses jawaban. Dan berikut dibawah ini adalah Jawaban langsung dari Studyx AI:
+              </p>
+            </div>
+          )}
+          <div>
+            <h2 className="text-lg font-semibold mb-4">JAWABAN :</h2>
+            {formatAnswer(result.answer || "No answer available.")}
+          </div>
         </div>
       )}
     </div>
