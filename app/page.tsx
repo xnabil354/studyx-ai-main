@@ -14,7 +14,6 @@ export default function Home() {
     <div className={`min-h-screen flex flex-col items-center justify-center ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
       <main className="w-full max-w-2xl p-4">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold text-center">Studyx AI</h1>
           <div className="relative">
             <input
               type="checkbox"
@@ -43,7 +42,7 @@ export default function Home() {
             </label>
           </div>
         </div>
-        <StudyxAi_Question isDarkMode={false} />
+        <StudyxAi_Question isDarkMode={isDarkMode} />
       </main>
     </div>
   );
