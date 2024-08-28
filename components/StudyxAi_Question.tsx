@@ -210,7 +210,7 @@ const StudyxAi_Question = ({ isDarkMode }: { isDarkMode: boolean }) => {
       console.error("Error fetching data:", error);
       setResult({
         shortId: null,
-        answer: "Failed to get response from API",
+        answer: "Yahh... Gagal mendapatkan Jawaban. Silahkan coba lagi!",
       });
     } finally {
       setLoading(false);
