@@ -251,6 +251,7 @@ const StudyxAi_Question = ({ isDarkMode }: { isDarkMode: boolean }) => {
             placeholder="Ask me anything..."
             rows={3}
             className={`w-full p-4 pr-10 border rounded-lg focus:outline-none ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-gray-100 border-gray-300 text-gray-800'} resize-none`}
+            required
           />
           {question && (
             <button
