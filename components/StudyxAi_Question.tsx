@@ -32,11 +32,11 @@ const StudyxAi_Question = ({ isDarkMode }: { isDarkMode: boolean }) => {
       const modelsData: Model[] = [
         { id: 11, modelName: "GPT-4o" },
         { id: 19, modelName: "Claude 3.5 Sonnet" },
-        { id: 17, modelName: "Llama 3.1 405B" },
-        { id: 6, modelName: "Genimi 1.5 Pro" },
-        { id: 18, modelName: "Mistral Large 2" },
-        { id: 3, modelName: "Claude3 Opus" },
-        { id: 13, modelName: "Basic" },
+        // { id: 17, modelName: "Llama 3.1 405B" },
+        { id: 6, modelName: "Gemini 1.5 Pro" },
+        // { id: 18, modelName: "Mistral Large 2" },
+        // { id: 3, modelName: "Claude3 Opus" },
+        // { id: 13, modelName: "Basic" },
         { id: 14, modelName: "Advanced" },
       ];
       setModels(modelsData);
