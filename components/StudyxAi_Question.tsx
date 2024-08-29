@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 
@@ -21,16 +21,18 @@ const StudyxAi_Question = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const [selectedModelId, setSelectedModelId] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [result, setResult] = useState<Result | null>(null);
-  const [displayedAnswer, setDisplayedAnswer] = useState<string>("");
   const [isCopied, setIsCopied] = useState(false);
-  const [isTyping, setIsTyping] = useState(false);
 
   useEffect(() => {
     const fetchModels = async () => {
       const modelsData: Model[] = [
         { id: 11, modelName: "GPT-4o" },
         { id: 19, modelName: "Claude 3.5 Sonnet" },
-        { id: 6, modelName: "Gemini 1.5 Pro" },
+        { id: 17, modelName: "Llama 3.1 405B" },
+        { id: 6, modelName: "Genimi 1.5 Pro" },
+        { id: 18, modelName: "Mistral Large 2" },
+        { id: 3, modelName: "Claude3 Opus" },
+        { id: 13, modelName: "Basic" },
         { id: 14, modelName: "Advanced" },
       ];
       setModels(modelsData);
@@ -38,23 +40,6 @@ const StudyxAi_Question = ({ isDarkMode }: { isDarkMode: boolean }) => {
 
     fetchModels();
   }, []);
-
-  const typeAnswer = useCallback((text: string, index: number = 0) => {
-    if (index < text.length) {
-      setDisplayedAnswer((prev) => prev + text.charAt(index));
-      setTimeout(() => typeAnswer(text, index + 1), 20);
-    } else {
-      setIsTyping(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (result && result.answer) {
-      setIsTyping(true);
-      setDisplayedAnswer("");
-      typeAnswer(result.answer);
-    }
-  }, [result, typeAnswer]);
 
   const handleModelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedId = Number(e.target.value);
@@ -66,7 +51,7 @@ const StudyxAi_Question = ({ isDarkMode }: { isDarkMode: boolean }) => {
   };
 
   const handleCopyResult = () => {
-    if (result && result.answer && !result.answer.includes("Yahh... Gagal mendapatkan Jawaban.")) {
+    if (result && result.answer) {
       navigator.clipboard.writeText(result.answer);
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
@@ -159,7 +144,6 @@ const StudyxAi_Question = ({ isDarkMode }: { isDarkMode: boolean }) => {
     }
     setLoading(true);
     setResult(null);
-    setDisplayedAnswer("");
 
     try {
       const response = await fetch("/api/studyx-ai", {
@@ -243,38 +227,35 @@ const StudyxAi_Question = ({ isDarkMode }: { isDarkMode: boolean }) => {
       </p>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="relative">
-          <label htmlFor="question" className="block text-sm font-medium">
-            Enter your question:
-          </label>
           <textarea
-            id="question"
+            className={`w-full p-4 border ${isDarkMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-gray-900 border-purple-300'} rounded-lg focus:outline-none focus:ring-2 ${isDarkMode ? 'focus:ring-purple-300' : 'focus:ring-purple-500'} resize-none h-40 pr-10`}
+            placeholder="Ask anything in any subject..."
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500"
-            rows={4}
-            placeholder="Ask me anything..."
-          ></textarea>
-          <button
-            type="button"
-            className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 hover:text-gray-900"
-            onClick={handleDeleteQuestion}
-          >
-            Clear
-          </button>
+          />
+          {question && (
+            <button
+              type="button"
+              onClick={handleDeleteQuestion}
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
         </div>
-        <div>
-          <label htmlFor="model" className="block text-sm font-medium">
-            Select a model:
+        <div className="space-y-4">
+          <label htmlFor="model-select" className="block font-semibold">
+            Select AI Model:
           </label>
           <select
-            id="model"
-            value={selectedModelId ?? ""}
+            id="model-select"
+            className={`w-full p-2 border rounded-lg ${isDarkMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-gray-900 border-gray-300'}`}
+            value={selectedModelId || ''}
             onChange={handleModelChange}
-            className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500"
           >
-            <option value="" disabled>
-              Select a model...
-            </option>
+            <option value="" disabled>Select a model</option>
             {models.map((model) => (
               <option key={model.id} value={model.id}>
                 {model.modelName}
@@ -282,59 +263,62 @@ const StudyxAi_Question = ({ isDarkMode }: { isDarkMode: boolean }) => {
             ))}
           </select>
         </div>
-        <div className="text-center">
-          <button
-            type="submit"
-            className="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
-            disabled={loading}
-          >
-            {loading ? (
-              <svg
-                className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8v8z"
-                ></path>
-              </svg>
-            ) : (
-              "Get Answer"
-            )}
-          </button>
-        </div>
+        <button
+          type="submit"
+          className={`w-full ${isDarkMode ? 'bg-gradient-to-r from-purple-300 to-pink-300' : 'bg-gradient-to-r from-purple-500 to-pink-500'} text-white font-semibold py-3 px-6 rounded-lg hover:opacity-90 transition duration-300 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+          disabled={loading}
+        >
+          {loading ? 'Processing...' : 'Get answer'}
+        </button>
       </form>
+      {loading && (
+        <div className="flex justify-center my-4">
+          <svg
+            className="animate-spin h-8 w-8 text-purple-500"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+            ></path>
+          </svg>
+        </div>
+      )}
       {result && (
-        <div className="mt-6 p-4 bg-gray-100 rounded-md shadow-md">
-          <div className="text-sm">
-            <strong>Question ID:</strong> {result.shortId || "N/A"}
-          </div>
-          <div className="mt-4">
-            <strong>Answer:</strong>
-            <div className="mt-2 whitespace-pre-wrap">
-              {isTyping ? displayedAnswer : formatAnswer(result.answer || "")}
-            </div>
-          </div>
-          {!result.answer?.includes("Yahh... Gagal mendapatkan Jawaban.") && (
+        <div className="mt-8 p-4 bg-gray-100 rounded-lg shadow-md">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-semibold text-gray-800">Answer:</h2>
             <button
-              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
               onClick={handleCopyResult}
-              disabled={isCopied}
+              className={`group relative inline-flex items-center justify-center p-2 overflow-hidden font-medium rounded-md transition duration-300 ease-out ${
+                isDarkMode ? 'bg-purple-600 text-white' : 'bg-purple-500 text-white'
+              } hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-opacity-50`}
             >
-              {isCopied ? "Copied!" : "Copy Answer"}
+              <span className="absolute inset-0 flex items-center justify-center w-full h-full text-white duration-300 -translate-x-full group-hover:translate-x-0 ease">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                </svg>
+              </span>
+              <span className="absolute flex items-center justify-center w-full h-full text-white transition-all duration-300 transform group-hover:translate-x-full ease">
+                {isCopied ? "Copied!" : "Copy Answer"}
+              </span>
+              <span className="relative invisible">Copy Answer</span>
             </button>
-          )}
+          </div>
+          <div className="mt-4 text-gray-700">
+            {formatAnswer(result.answer || "No answer available.")}
+          </div>
         </div>
       )}
     </div>
