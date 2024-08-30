@@ -53,7 +53,7 @@ const SimilarQuestions: React.FC<SimilarQuestionsProps> = ({ shortId, isDarkMode
     setError(null);
     setSelectedQuestion(qntId);
     try {
-      const response = await fetch('/api/pushQuestionV2', {
+      const response = await fetch('/api/getQuestion', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

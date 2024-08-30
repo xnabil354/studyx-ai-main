@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import StudyxAi_Question from '../components/StudyxAi_Question';
 
 export default function Home() {
@@ -9,6 +9,35 @@ export default function Home() {
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
   };
+
+  useEffect(() => {
+    const handleContextMenu = (e: any) => e.preventDefault();
+    const handleKeyDown = (e: any) => {
+      if (
+        e.key === 'F12' ||
+        (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+        (e.ctrlKey && e.shiftKey && e.key === 'J') ||
+        (e.ctrlKey && e.key === 'U')
+      ) {
+        e.preventDefault();
+      }
+    };
+
+    document.addEventListener('contextmenu', handleContextMenu);
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('contextmenu', handleContextMenu);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
+  useEffect(() => {
+    const noop = () => {};
+    console.log = noop;
+    console.warn = noop;
+    console.error = noop;
+  }, []);
 
   return (
     <div className={`min-h-screen flex flex-col items-center justify-center ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>

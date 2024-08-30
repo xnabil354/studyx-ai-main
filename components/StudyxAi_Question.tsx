@@ -163,7 +163,7 @@ const StudyxAi_Question = ({ isDarkMode }: { isDarkMode: boolean }) => {
     setSimilarQuestionAnswer(null);
 
     try {
-      const response = await fetch("/api/studyx-ai", {
+      const response = await fetch("/api/getShortId", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -180,7 +180,7 @@ const StudyxAi_Question = ({ isDarkMode }: { isDarkMode: boolean }) => {
       const shortId = data?.shortId || "No shortId received.";
 
       if (shortId !== "No shortId received.") {
-        const pushResponse = await fetch("/api/pushQuestionV2", {
+        const pushResponse = await fetch("/api/getQuestion", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
