@@ -1,0 +1,9 @@
+{
+    "functions": {
+      "app/api/pushQuestionV2/route": {
+        "maxDuration": 60,
+        "memory": 1024
+      }
+    }
+  }
+  
