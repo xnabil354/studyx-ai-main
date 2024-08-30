@@ -256,7 +256,7 @@ return (
         value={question}
         onChange={(e) => setQuestion(e.target.value)}
         placeholder="Ask me anything..."
-        rows={3}
+        rows={10}
         className={`w-full p-4 pr-10 border rounded-lg focus:outline-none ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-gray-100 border-gray-300 text-gray-800'} resize-none`}
         required
       />
