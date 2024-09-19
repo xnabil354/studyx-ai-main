@@ -122,10 +122,8 @@ const SimilarQuestions: React.FC<SimilarQuestionsProps> = ({ shortId, isDarkMode
           >
             <div 
               dangerouslySetInnerHTML={renderHtmlContent(question.htmlContent)} 
-              className="mb-2"
+              className="mb-2 text-justify"
             />
-            <div className="flex justify-between items-center mt-2">
-            </div>
           </div>
         ))}
       </div>
